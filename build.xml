@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="run-server" name="WF-3">
+	<description>
+			Script for WF Assignment 3
+	</description>
+
+	<!-- The "WFMonitorFactory" used for WFInfo and as data generator for tests -->
+	<property name="WFInfo.WFMonitorFactory" value="it.polito.dp2.WF.Random.WorkflowMonitorFactoryImpl" />
+
+	<!-- The default test case -->
+	<property name="testcase" value="0" />
+	<!-- The default test class -->
+	<property name="test.class" value="it.polito.dp2.WF.lab3.tests.WFTests" />
+
+    <!-- The location of the WorkflowInfo web service -->
+	<property name="PORT" value="8181"/>
+	<property name="URL" value="http://localhost:${PORT}/WorkflowInfoService"/>
+	<property name="WSDL" value="${URL}?wsdl"/>
+
+	<property name="lab3.location" location="." />
+
+	<property name="src.dir" location="${lab3.location}/src" />
+	<property name="build.dir" location="${lab3.location}/build" />
+	<property name="lib.dir" location="${lab3.location}/lib" />
+	<property name="gen.dir" location="${lab3.location}/gen-src" />
+	<property name="package" value="it.polito.dp2.WF.lab3.gen"/>
+	<property name="custom.file" location="${lab3.location}/custom/bindings.xml" />
+	
+	<property name="debug" value="true" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.7" />
+	<property name="source" value="1.7" />
+	
+	<!-- The classpath to be used for compilation of the solution -->
+	<path id="sol.classpath">
+		<pathelement location="${lib.dir}/WF.jar"/>
+	</path>
+
+	<!-- The classpath that includes only the WF.jar -->
+	<path id="WF.classpath">
+		<pathelement location="${lib.dir}/WF.jar"/>
+	</path>
+	
+	<!-- The classpath to be used for running the tests -->
+	<path id="test.classpath">
+		<pathelement location="${build.dir}" />
+		<pathelement location="${lib.dir}/WorkflowInfoServer.jar"/>
+		<pathelement location="${lib.dir}/WFRandom.jar"/>
+		<pathelement location="${lib.dir}/junit-4.5.jar"/>
+		<pathelement location="${lib.dir}/lab3.jar"/>
+		<pathelement location="${lib.dir}/WF.jar" />
+	</path>
+	
+	<!-- Target setseed	-->
+	<target name="setseed" unless="seed">
+		<tstamp>
+			<format property="seed" pattern="HHmmss" />
+		</tstamp>
+	</target>
+	
+	<!-- Target init	-->
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${gen.dir}" />
+	</target>
+	
+	<target name="buildWFInfo">
+		<echo>Building WFInfo (if needed)...</echo>
+		<mkdir dir="${build.dir}" />
+		<javac 
+			destdir="${build.dir}"
+			debug="${debug}"
+			debuglevel="${debuglevel}"
+			source="${source}"
+			target="${target}"
+			includeantruntime="false">
+				<src path="${src.dir}" />
+				<include name="it/polito/dp2/WF/lab1/WFInfo.java" />
+				<classpath>
+					<path refid="WF.classpath" />
+				</classpath>
+		</javac>
+		<echo>Done.</echo>
+	</target>
+
+	<target name="WFInfo" depends="buildWFInfo, setseed" description="Run WFInfo">
+		<java classname="it.polito.dp2.WF.lab1.WFInfo" failonerror="true" fork="yes">
+			<sysproperty key="it.polito.dp2.WF.Random.seed" value="${seed}"/>
+			<sysproperty key="it.polito.dp2.WF.Random.testcase" value="${testcase}"/>
+			<sysproperty key="it.polito.dp2.WF.WorkflowMonitorFactory" value="${WFInfo.WFMonitorFactory}"/>
+			<classpath>
+				<path refid="WF.classpath" />
+				<pathelement location="${lib.dir}/WFRandom.jar"/>
+				<pathelement path="${build.dir}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<!-- Target run-server	-->
+	<target name="run-server" depends="setseed" description="Run the server">
+		<java fork="yes" jar="${lib.dir}/WorkflowInfoServer.jar" dir=".">
+			<sysproperty key="it.polito.dp2.WF.WorkflowMonitorFactory" value="${WFInfo.WFMonitorFactory}" />
+			<sysproperty key="it.polito.dp2.WF.Random.seed" value="${seed}"/>
+			<sysproperty key="it.polito.dp2.WF.Random.testcase" value="${testcase}"/>
+			<arg value="${PORT}" />
+		</java>
+	</target>
+	
+	<!-- Target chk-custom	-->
+	<target name="chk-custom">
+		<available property="customization.file.exists" file="${custom.file}"/>
+	</target>
+	
+	<!-- Target set-custom-option	-->
+	<target name="set-custom-option" depends="chk-custom,reset-custom-option" if="customization.file.exists">
+		<property name="custom.option" value="-b ${custom.file}" />
+	</target>
+	
+	<!-- Target reset-custom-option	-->
+	<target name="reset-custom-option" depends="chk-custom" unless="customization.file.exists">
+		<property name="custom.option" value="" />
+	</target>
+	
+	<!-- define the "compile.wsdl" target -->
+	<target name="compile-wsdl" depends="init,set-custom-option" description="Compile WSDL and generate bindings">
+	    <echo message = "${WSDL}"/> 
+	    <exec executable="wsimport">
+	        <arg line="${custom.option} -d '${build.dir}' -p '${package}' -s '${gen.dir}' -keep ${WSDL}"/>
+	    </exec>
+	</target>   
+	
+	<!-- Target buildClient -->
+	<target name="buildClient" depends="init, compile-wsdl" description="Build your solution">
+		<echo>Building the submitted solution (if needed)...</echo>
+		<javac destdir="${build.dir}" debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" includeantruntime="false">
+			<src path="${src.dir}"/>
+			<src path="${gen.dir}"/>
+			<include name="it/polito/dp2/WF/sol3/**" />
+			<include name="it/polito/dp2/WF/lab3/*.java" />
+			<classpath>
+				<path refid="sol.classpath" />
+			</classpath>
+		</javac>
+		<echo>Done.</echo>
+	</target>
+
+	<!-- Target runFuncTest	-->
+	<target name="runFuncTest" depends="setseed" description="Run Functional tests">
+		<antcall target="runFuncTest.real">
+			<param name="test.class" value="${test.class}" />
+			<param name="exit.code" value="126" />
+		</antcall>
+	</target>
+
+	<!-- Target runTest.real	-->
+	<target name="runFuncTest.real" depends="buildClient, setseed">
+		<junit printsummary="yes" dir="." fork="yes" haltonfailure="no" showoutput="no" filtertrace="true" timeout="120000">
+			<jvmarg value="-Djava.awt.headless=true" />
+			<sysproperty key="it.polito.dp2.WF.WorkflowMonitorFactory" value="it.polito.dp2.WF.Random.WorkflowMonitorFactoryImpl" />
+			<sysproperty key="it.polito.dp2.WF.Random.testcase" value="${testcase}"/>
+			<sysproperty key="it.polito.dp2.WF.Random.seed" value="${seed}"/>
+			<sysproperty key="it.polito.dp2.WF.sol3.URL" value="${URL}"/>
+			<sysproperty key="it.polito.dp2.WF.sol3.port" value="${PORT}"/>
+			<formatter type="brief" usefile="false"/>
+			<test haltonfailure="no" failureproperty="test_failed" name="${test.class}"/>
+			<classpath>
+				<path refid="test.classpath" />
+			</classpath>
+		</junit>
+		<fail if="test_failed" status="${exit.code}" message="*** Some Tests FAILED ***"/>
+		<echo>*** All Tests PASSED  ***</echo>
+	</target>
+
+	<!-- Target clean	-->
+	<target name="clean" description="Clean generated files and class files">
+		<delete dir="${build.dir}" />
+		<delete dir="${gen.dir}" />
+	</target>
+	
+	<!--target for building the final zip containing the solution -->
+	<target name="make-final-zip" description="Make final zip to be submitted">
+		<zip destfile="lab3.zip"
+			basedir="${lab3.location}"
+		    includes="custom/* src/it/polito/dp2/WF/sol3/**/*.java"
+		/>
+	</target>
+
+</project>
