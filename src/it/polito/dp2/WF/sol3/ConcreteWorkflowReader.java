@@ -48,10 +48,10 @@ public class ConcreteWorkflowReader implements WorkflowReader, Comparable<Workfl
 			ActionReader actReader = actionReaders.get(action.getName());
 			
 			if(actReader instanceof SimpleActionR) {
-				List<String> nextActions = action.getNextAction();
+				List<String> nextActionNames = action.getNextAction();
 				
 				SimpleActionR sar = (SimpleActionR)actReader;
-				sar.setPossibleNextActions(nextActions, actionReaders);
+				sar.setPossibleNextActions(nextActionNames, actionReaders);
 			}
 		}
 	}

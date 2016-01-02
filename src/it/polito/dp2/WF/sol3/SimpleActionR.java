@@ -27,7 +27,6 @@ public class SimpleActionR extends AbstractActionReader implements SimpleActionR
 
 	public SimpleActionR(Action action, WorkflowReader workflowReader) {
 		super(action, workflowReader);
-		//TODO: auto-generated constructor stub
 	}
 
 
@@ -51,8 +50,11 @@ public class SimpleActionR extends AbstractActionReader implements SimpleActionR
 		return super.toString()+"\n\t\t"+buf.toString();
 	}
 
-	public void setPossibleNextActions(List<String> nextActions, Map<String,ActionReader> actions) {
-		
+	public void setPossibleNextActions(List<String> nextActionNames, Map<String,ActionReader> actions) {
+		for(String actionName : nextActionNames) {
+			ActionReader nextAction = actions.get(actionName);
+			nextPossibleActions.put(nextAction.getName(), nextAction);
+		}
 	}
 
 }
