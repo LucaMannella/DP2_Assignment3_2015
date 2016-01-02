@@ -12,8 +12,6 @@ import java.util.TreeSet;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 
-import com.oracle.xmlns.internal.webservices.jaxws_databinding.ObjectFactory;
-
 import it.polito.dp2.WF.ProcessReader;
 import it.polito.dp2.WF.WorkflowMonitor;
 import it.polito.dp2.WF.WorkflowMonitorException;
@@ -35,7 +33,7 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 	private Map<String, WorkflowReader> workflows;
 	private Set<ProcessReader> processes;
 	
-	public ConcreteWorkflowMonitor() throws MalformedURLException, WorkflowMonitorException {		// TODO ConcreteWorkflowMonitor Constructor
+	public ConcreteWorkflowMonitor() throws MalformedURLException, WorkflowMonitorException {
 		workflows = new HashMap<String, WorkflowReader>();
 		processes = new HashSet<ProcessReader>();		// it must remains empty
 		
