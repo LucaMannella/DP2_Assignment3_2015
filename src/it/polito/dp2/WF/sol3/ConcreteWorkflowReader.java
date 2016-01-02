@@ -12,6 +12,7 @@ import it.polito.dp2.WF.ProcessReader;
 import it.polito.dp2.WF.WorkflowReader;
 import it.polito.dp2.WF.lab3.gen.Action;
 import it.polito.dp2.WF.lab3.gen.Workflow;
+import it.polito.dp2.WF.sol3.ProcessActionR;
 import it.polito.dp2.WF.sol3.SimpleActionR;
 
 /**
@@ -93,6 +94,16 @@ public class ConcreteWorkflowReader implements WorkflowReader, Comparable<Workfl
 		}
 		
 		return buf.toString();
+	}
+	
+	public void setWfsInsideProcessActions(Map<String, WorkflowReader> workflows) {
+		for( ActionReader actReader : actionReaders.values() ) {
+			
+			if(actReader instanceof ProcessActionR) {
+				ProcessActionR par = (ProcessActionR)actReader;
+				par.setNextWorkflow(workflows);
+			}
+		}
 	}
 
 }

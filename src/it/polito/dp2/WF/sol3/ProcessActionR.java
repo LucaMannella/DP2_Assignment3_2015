@@ -1,6 +1,6 @@
 package it.polito.dp2.WF.sol3;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import it.polito.dp2.WF.ProcessActionReader;
 import it.polito.dp2.WF.WorkflowReader;
@@ -23,9 +23,9 @@ public class ProcessActionR extends AbstractActionReader implements ProcessActio
 
 	public ProcessActionR(Action action, WorkflowReader workflowReader) {
 		super(action, workflowReader);
-//TODO: if(action == null)	return;
 		
-		//TODO: auto-generated constructor stub	
+//TODO: if(action == null)	return;
+		workflowName = action.getWorkflow();
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class ProcessActionR extends AbstractActionReader implements ProcessActio
 		return super.toString()+"\n\t\tNextWorkflow: "+nextWorkflow.getName();
 	}
 
-	public void setNextWorkflow(HashMap<String,WorkflowReader> workflows) {
+	public void setNextWorkflow(Map<String,WorkflowReader> workflows) {
 		nextWorkflow = workflows.get(workflowName);
 	}
 

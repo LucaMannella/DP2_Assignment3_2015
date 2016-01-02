@@ -21,6 +21,7 @@ import it.polito.dp2.WF.lab3.gen.UnknownNames_Exception;
 import it.polito.dp2.WF.lab3.gen.Workflow;
 import it.polito.dp2.WF.lab3.gen.WorkflowInfo;
 import it.polito.dp2.WF.lab3.gen.WorkflowInfoService;
+import it.polito.dp2.WF.sol3.ConcreteWorkflowReader;
 
 /**
  * This is a concrete implementation of the interface WorkflowMonitor based on the JAXB framework.<BR><BR>
@@ -58,11 +59,17 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 			throw new WorkflowMonitorException("Error retrieving the workflows: "+e.getMessage());
 		}
 		
-		//build the WorkflowReaderSet
+		// build the WorkflowReaderSet
 		for( Workflow wf: workflowsHolder.value ) {
 			WorkflowReader wfr = new ConcreteWorkflowReader(wf);
 			workflows.put(wfr.getName(), wfr);
 		}
+		// this loop is to managing the ProcessActions
+		for( WorkflowReader wf : workflows.values() ) {
+			if(wf instanceof ConcreteWorkflowReader)
+				((ConcreteWorkflowReader)wf).setWfsInsideProcessActions(workflows);
+		}
+		System.out.println(workflows.size()+" workflows were created.");
 		
 	}
 
