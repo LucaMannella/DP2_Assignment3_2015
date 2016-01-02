@@ -1,4 +1,8 @@
+# Generated Files
 *.class
+zip/
+build/
+gen-src/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
