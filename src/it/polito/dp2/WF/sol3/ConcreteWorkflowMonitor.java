@@ -4,10 +4,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
@@ -21,7 +21,6 @@ import it.polito.dp2.WF.lab3.gen.UnknownNames_Exception;
 import it.polito.dp2.WF.lab3.gen.Workflow;
 import it.polito.dp2.WF.lab3.gen.WorkflowInfo;
 import it.polito.dp2.WF.lab3.gen.WorkflowInfoService;
-import it.polito.dp2.WF.sol3.ConcreteWorkflowReader;
 
 /**
  * This is a concrete implementation of the interface WorkflowMonitor based on the JAXB framework.<BR><BR>
@@ -109,7 +108,7 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 
 	@Override
 	public Set<WorkflowReader> getWorkflows() {
-		return new TreeSet<WorkflowReader>(workflows.values());
+		return new LinkedHashSet<WorkflowReader>(workflows.values());
 	}
 	
 	public String toString(){

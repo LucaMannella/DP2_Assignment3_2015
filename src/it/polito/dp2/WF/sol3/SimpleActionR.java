@@ -1,10 +1,10 @@
 package it.polito.dp2.WF.sol3;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import it.polito.dp2.WF.ActionReader;
 import it.polito.dp2.WF.SimpleActionReader;
@@ -35,7 +35,7 @@ public class SimpleActionR extends AbstractActionReader implements SimpleActionR
 
 	@Override
 	public Set<ActionReader> getPossibleNextActions() {
-		return new TreeSet<ActionReader>(nextPossibleActions.values());
+		return new LinkedHashSet<ActionReader>(nextPossibleActions.values());
 	}
 	
 

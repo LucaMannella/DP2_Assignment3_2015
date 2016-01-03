@@ -2,18 +2,16 @@ package it.polito.dp2.WF.sol3;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import it.polito.dp2.WF.ActionReader;
 import it.polito.dp2.WF.ProcessReader;
 import it.polito.dp2.WF.WorkflowReader;
 import it.polito.dp2.WF.lab3.gen.Action;
 import it.polito.dp2.WF.lab3.gen.Workflow;
-import it.polito.dp2.WF.sol3.ProcessActionR;
-import it.polito.dp2.WF.sol3.SimpleActionR;
 
 /**
  * This is a concrete implementation of the interface WorkflowReader based on the JAX-WS framework.<BR><BR>
@@ -63,7 +61,7 @@ public class ConcreteWorkflowReader implements WorkflowReader, Comparable<Workfl
 
 	@Override
 	public Set<ActionReader> getActions() {
-		return new TreeSet<ActionReader>(actionReaders.values());
+		return new LinkedHashSet<ActionReader>(actionReaders.values());
 	}
 
 	@Override
