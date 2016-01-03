@@ -26,12 +26,6 @@ public class WorkflowMonitorFactory extends it.polito.dp2.WF.WorkflowMonitorFact
 			throw e;
 		}
 		
-		/* catch (JAXBException | SAXException e) {
-			System.err.println("Error: "+e.getMessage());
-			e.printStackTrace();
-			throw new WorkflowMonitorException(e.getMessage());
-		}*/
-		
 		return myMonitor;
 	}
 	
