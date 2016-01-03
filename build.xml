@@ -156,6 +156,10 @@
 	<!-- Target runTest.real	-->
 	<target name="runFuncTest.real" depends="buildClient, setseed">
 		<junit printsummary="yes" dir="." fork="yes" haltonfailure="no" showoutput="no" filtertrace="true" timeout="120000">
+			<!-- this is for debug purpose !>
+			<jvmarg value="-Xdebug" />
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5432" />
+			<! end debug zone !-->
 			<jvmarg value="-Djava.awt.headless=true" />
 			<sysproperty key="it.polito.dp2.WF.WorkflowMonitorFactory" value="it.polito.dp2.WF.Random.WorkflowMonitorFactoryImpl" />
 			<sysproperty key="it.polito.dp2.WF.Random.testcase" value="${testcase}"/>
