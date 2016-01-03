@@ -34,9 +34,9 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 	private Map<String, WorkflowReader> workflows;
 	private Set<ProcessReader> processes;
 	
+	private WorkflowInfo proxy;
+	
 	public ConcreteWorkflowMonitor() throws MalformedURLException, WorkflowMonitorException {
-		workflows = new HashMap<String, WorkflowReader>();
-		processes = new HashSet<ProcessReader>();		// it must remains empty
 		
 		// taking the URL of the Web Service
 		String webServiceString = System.getProperty("it.polito.dp2.WF.sol3.URL");
@@ -44,16 +44,25 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 		
 		// taking the port (proxy) from the service
 		WorkflowInfoService service = new WorkflowInfoService(webServiceURL);
-		WorkflowInfo proxy = service.getWorkflowInfoPort();
+		proxy = service.getWorkflowInfoPort();
 		
-		System.out.println("Retrieving the names of the workflows...");
+		System.out.println("...Building the WorkflowMonitor...");
+		buildWorkflowMonitor();
+		System.out.println(workflows.size()+" workflows were created.");
+		
+	}
+
+	private void buildWorkflowMonitor() throws WorkflowMonitorException {
+		workflows = new HashMap<String, WorkflowReader>();
+		processes = new HashSet<ProcessReader>();		// it must remains empty
+		
 		Holder<XMLGregorianCalendar> calendarHolder = new Holder<XMLGregorianCalendar>();
 		Holder<List<String>> workflowNamesHolder = new Holder<List<String>>();
 		proxy.getWorkflowNames(calendarHolder, workflowNamesHolder);
 		
 		Holder<List<Workflow>> workflowsHolder = new Holder<List<Workflow>>();
 		try {
-			System.out.println("Retrieving the workflows...");
+			System.out.println("...Retrieving the workflows...");
 			proxy.getWorkflows(workflowNamesHolder.value, calendarHolder, workflowsHolder);
 		} catch (UnknownNames_Exception e) {
 			throw new WorkflowMonitorException("Error retrieving the workflows: "+e.getMessage());
@@ -69,19 +78,23 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 			if(wf instanceof ConcreteWorkflowReader)
 				((ConcreteWorkflowReader)wf).setWfsInsideProcessActions(workflows);
 		}
-		System.out.println(workflows.size()+" workflows were created.");
-		
 	}
 
+	/**
+	 * The refresh() method must align the local information about workflows in the client 
+	 * with the information currently provided by the service.  
+	 */
 	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-		/* 
-		 * This interface includes the refresh() method, 
-		 * which must align the local information about workflows in the client 
-		 * with the information currently provided by the service. 
-		 */
-		// -------------------------------
+	public void refresh() {		// TODO: test me!
+		System.out.println("...Starting the update procedure...");
+		try {
+			buildWorkflowMonitor();
+		} catch (WorkflowMonitorException e) {
+			System.err.println("Error! Impossible to retrieve the workflows: "+e.getMessage());
+			System.out.println("Refresh aborted!");
+			return;
+		}
+		System.out.println(workflows.size()+" workflows were updated.");
 	}
 
 	@Override
