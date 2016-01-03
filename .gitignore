@@ -3,6 +3,8 @@
 zip/
 build/
 gen-src/
+log/
+zip/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
