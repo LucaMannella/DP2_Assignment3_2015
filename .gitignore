@@ -1,6 +1,5 @@
-# Generated Files
+# Generated Files #
 *.class
-zip/
 build/
 gen-src/
 log/
