@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema version="1.0" targetNamespace="http://lucamannella.altervista.org/WorkflowManager/"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		xmlns:wf="http://lucamannella.altervista.org/WorkflowManager/">
+	
+	<xsd:element name="getWorkflowNames" type="wf:getWorkflowNames" />
+	<xsd:element name="getWorkflowNamesResponse" type="wf:getWorkflowNamesResponse" />
+	<xsd:element name="getWorkflows" type="wf:getWorkflows" />
+	<xsd:element name="getWorkflowsResponse" type="wf:getWorkflowsResponse" />
+	<xsd:element name="UnknownNames" type="wf:UnknownNames" />
+	
+				
+	<xsd:complexType name="getWorkflowNames">
+		<xsd:sequence />
+	</xsd:complexType>
+	
+	<xsd:complexType name="getWorkflowNamesResponse">
+		<xsd:sequence>
+			<xsd:element name="lastModTime" type="xsd:dateTime" />
+			<xsd:element name="name" type="wf:Name" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="getWorkflows">
+		<xsd:sequence>
+			<xsd:element name="wfname" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="getWorkflowsResponse">
+		<xsd:sequence>
+			<xsd:element name="lastModTime" type="xsd:dateTime" />
+			<xsd:element name="workflow" type="wf:workflow"	minOccurs="0" maxOccurs="unbounded">
+				<xsd:key name="actionKey">
+					<xsd:selector xpath="action" />
+					<xsd:field xpath="name" />
+				</xsd:key>
+				<xsd:keyref name="nextActionKeyRef" refer="wf:actionKey">
+					<xsd:selector xpath="action" />
+					<xsd:field xpath="nextAction" />
+				</xsd:keyref>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="UnknownNames">
+		<xsd:sequence>
+			<xsd:element name="message" type="xsd:string" minOccurs="0" />
+			<xsd:element name="names" type="wf:Name" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="Name">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[a-zA-Z][a-zA-Z0-9]*" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+			<xsd:complexType name="workflow">
+		<xsd:sequence>
+			<xsd:element name="name" type="wf:Name" />
+			<xsd:element name="action" type="wf:action" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="action">
+		<xsd:sequence>
+			<xsd:element name="name" type="wf:Name" />
+			<xsd:element name="automaticallyInstantiated" type="xsd:boolean" />
+			<xsd:element name="role" type="wf:Role" />
+			<xsd:choice>
+				<xsd:element name="nextAction" type="wf:Name" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element name="workflow" type="wf:Name" minOccurs="0" />
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="Role">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[a-zA-Z ]*" />
+		</xsd:restriction>
+	</xsd:simpleType>
+		
+</xsd:schema>
