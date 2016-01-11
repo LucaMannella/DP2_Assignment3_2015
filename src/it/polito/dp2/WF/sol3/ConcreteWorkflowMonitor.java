@@ -2,6 +2,7 @@ package it.polito.dp2.WF.sol3;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 
@@ -31,9 +33,11 @@ import it.polito.dp2.WF.lab3.gen.WorkflowInfoService;
 public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 	
 	private Map<String, WorkflowReader> workflows;
+	private Map<String, XMLGregorianCalendar> lastUpdateTimes;
 	private Set<ProcessReader> processes;
 	
 	private WorkflowInfo proxy;
+	private XMLGregorianCalendar lastUpdateTime;
 	
 	public ConcreteWorkflowMonitor() throws MalformedURLException, WorkflowMonitorException {
 		
@@ -51,8 +55,14 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 		
 	}
 
+	/**
+	 * This method creates the {@link WorkflowMonitor} taking the data from SOAP a Web Service.
+	 * 
+	 * @throws WorkflowMonitorException - If it is not possible to instantiate the {@link ConcreteWorkflowMonitor}
+	 */
 	private void buildWorkflowMonitor() throws WorkflowMonitorException {
 		workflows = new HashMap<String, WorkflowReader>();
+		lastUpdateTimes = new HashMap<String, XMLGregorianCalendar>();
 		processes = new HashSet<ProcessReader>();		// it must remains empty
 		
 		Holder<XMLGregorianCalendar> calendarHolder = new Holder<XMLGregorianCalendar>();
@@ -63,6 +73,7 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 		try {
 			System.out.println("...Retrieving the workflows...");
 			proxy.getWorkflows(workflowNamesHolder.value, calendarHolder, workflowsHolder);
+			lastUpdateTime = calendarHolder.value;
 		} catch (UnknownNames_Exception e) {
 			throw new WorkflowMonitorException("Error retrieving the workflows: "+e.getMessage());
 		}
@@ -87,13 +98,56 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 	public void refresh() {		// TODO: test me!
 		System.out.println("...Starting the update procedure...");
 		try {
-			buildWorkflowMonitor();
+			updateWorkflowMonitor();
 		} catch (WorkflowMonitorException e) {
 			System.err.println("Error! Impossible to retrieve the workflows: "+e.getMessage());
 			System.out.println("Refresh aborted!");
 			return;
 		}
 		System.out.println(workflows.size()+" workflows were updated.");
+	}
+	
+	/**
+	 * This method updates the {@link WorkflowMonitor} taking the data from SOAP a Web Service.
+	 * 
+	 * @throws WorkflowMonitorException - If it is not possible to instantiate the {@link ConcreteWorkflowMonitor}
+	 */
+	private void updateWorkflowMonitor() throws WorkflowMonitorException {
+		// --- Taking the names of the workflows --- //
+		Holder<XMLGregorianCalendar> calendarHolder = new Holder<XMLGregorianCalendar>();
+		Holder<List<String>> workflowNamesHolder = new Holder<List<String>>();
+		proxy.getWorkflowNames(calendarHolder, workflowNamesHolder);
+		
+		// --- Taking the workflows and the last update time --- //
+		Holder<List<Workflow>> workflowsHolder = new Holder<List<Workflow>>();
+		try {
+			System.out.println("...Retrieving the workflows...");
+			proxy.getWorkflows(workflowNamesHolder.value, calendarHolder, workflowsHolder);
+		} catch (UnknownNames_Exception e) {
+			throw new WorkflowMonitorException("Error retrieving the workflows: "+e.getMessage());
+		}
+		
+		if( calendarHolder.value.compare(lastUpdateTime) == DatatypeConstants.GREATER ) {
+			
+			workflows = new HashMap<String, WorkflowReader>();
+			processes = new HashSet<ProcessReader>();		// it must remains empty
+			
+			// build the WorkflowReaderSet
+			for( Workflow wf: workflowsHolder.value ) {
+				WorkflowReader wfr = new ConcreteWorkflowReader(wf);
+				workflows.put(wfr.getName(), wfr);
+			}
+			// this loop is to managing the ProcessActions
+			for( WorkflowReader wf : workflows.values() ) {
+				if(wf instanceof ConcreteWorkflowReader)
+					((ConcreteWorkflowReader)wf).setWfsInsideProcessActions(workflows);
+			}
+			
+			System.out.println("All the workflows were updated!");
+		}
+		else {
+			System.out.println("There is nothing to update!");
+		}
 	}
 
 	@Override
