@@ -1,8 +1,17 @@
 package it.polito.dp2.WF.sol3;
 
+import it.polito.dp2.WF.ProcessReader;
+import it.polito.dp2.WF.WorkflowMonitor;
+import it.polito.dp2.WF.WorkflowMonitorException;
+import it.polito.dp2.WF.WorkflowReader;
+import it.polito.dp2.WF.lab3.Refreshable;
+import it.polito.dp2.WF.lab3.gen.UnknownNames_Exception;
+import it.polito.dp2.WF.lab3.gen.Workflow;
+import it.polito.dp2.WF.lab3.gen.WorkflowInfo;
+import it.polito.dp2.WF.lab3.gen.WorkflowInfoService;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -14,16 +23,6 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 
-import it.polito.dp2.WF.ProcessReader;
-import it.polito.dp2.WF.WorkflowMonitor;
-import it.polito.dp2.WF.WorkflowMonitorException;
-import it.polito.dp2.WF.WorkflowReader;
-import it.polito.dp2.WF.lab3.Refreshable;
-import it.polito.dp2.WF.lab3.gen.UnknownNames_Exception;
-import it.polito.dp2.WF.lab3.gen.Workflow;
-import it.polito.dp2.WF.lab3.gen.WorkflowInfo;
-import it.polito.dp2.WF.lab3.gen.WorkflowInfoService;
-
 /**
  * This is a concrete implementation of the interface WorkflowMonitor based on the JAXB framework.<BR><BR>
  * If you want more detail about the interface look to {@link it.polito.dp2.WF.WorkflowMonitor}
@@ -33,7 +32,6 @@ import it.polito.dp2.WF.lab3.gen.WorkflowInfoService;
 public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 	
 	private Map<String, WorkflowReader> workflows;
-	private Map<String, XMLGregorianCalendar> lastUpdateTimes;
 	private Set<ProcessReader> processes;
 	
 	private WorkflowInfo proxy;
@@ -62,7 +60,6 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 	 */
 	private void buildWorkflowMonitor() throws WorkflowMonitorException {
 		workflows = new HashMap<String, WorkflowReader>();
-		lastUpdateTimes = new HashMap<String, XMLGregorianCalendar>();
 		processes = new HashSet<ProcessReader>();		// it must remains empty
 		
 		Holder<XMLGregorianCalendar> calendarHolder = new Holder<XMLGregorianCalendar>();
