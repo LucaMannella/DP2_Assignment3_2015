@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import it.polito.dp2.WF.ActionReader;
+import it.polito.dp2.WF.ProcessActionReader;
 import it.polito.dp2.WF.ProcessReader;
+import it.polito.dp2.WF.WorkflowMonitor;
 import it.polito.dp2.WF.WorkflowReader;
 import it.polito.dp2.WF.lab3.gen.Action;
 import it.polito.dp2.WF.lab3.gen.Workflow;
@@ -79,6 +81,7 @@ public class ConcreteWorkflowReader implements WorkflowReader, Comparable<Workfl
 		return this.name.compareTo(o.getName());
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer("Workflow: "+name+"\n");
 		
@@ -94,6 +97,12 @@ public class ConcreteWorkflowReader implements WorkflowReader, Comparable<Workfl
 		return buf.toString();
 	}
 	
+	/**
+	 * This method set inside each {@link ProcessActionReader} of this {@link WorkflowReader}
+	 * the Workflow that will be instantiated after that this action will be completed.
+	 *  
+	 * @param workflows - All the workflows of the {@link WorkflowMonitor}
+	 */
 	public void setWfsInsideProcessActions(Map<String, WorkflowReader> workflows) {
 		for( ActionReader actReader : actionReaders.values() ) {
 			
