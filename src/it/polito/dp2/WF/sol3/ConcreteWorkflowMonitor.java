@@ -12,6 +12,8 @@ import it.polito.dp2.WF.lab3.gen.WorkflowInfoService;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -24,8 +26,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 
 /**
- * This is a concrete implementation of the interface WorkflowMonitor based on the JAXB framework.<BR><BR>
- * If you want more detail about the interface look to {@link it.polito.dp2.WF.WorkflowMonitor}
+ * This is a concrete implementation of the interface {@link WorkflowMonitor} based on the JAX-WS framework.
  * 
  * @author Luca
  */
@@ -162,16 +163,64 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 		return new LinkedHashSet<WorkflowReader>(workflows.values());
 	}
 	
+	@Override
 	public String toString(){
 		StringBuffer buf = new StringBuffer("Inside this WorkflowMonitor there are:\n");
 		
+		buf.append("--- Workflows ---\n");
 		if((workflows==null) || (workflows.isEmpty()))
 			buf.append("\tNo Workflows\n");
 		else {
 			for(WorkflowReader wfr : workflows.values())
-				buf.append("\t"+wfr.toString()+"\n");
+				buf.append(wfr.toString()+"\n");
 		}
-				
+		buf.append("\n");
+		
+		buf.append("--- Processes ---\n");
+		if((processes==null) || (processes.isEmpty()))
+			buf.append("\tNo Processes\n");
+		else {
+			for(ProcessReader pr : processes)
+				buf.append(pr.toString()+"\n");
+		}
+		buf.append("\n\n");
+		
+		return buf.toString();
+	}
+
+	/**
+	 * This method is a shorter version of the toString method.
+	 * @return A string that represent the object.
+	 */
+	public String toShortString() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+		
+		StringBuffer buf = new StringBuffer("Inside this WorkflowMonitor there are:\n");
+		
+		buf.append("--- Workflows ---\n");
+		if((workflows==null) || (workflows.isEmpty()))
+			buf.append("\tNo Workflows\n");
+		else {
+			for(WorkflowReader wfr : workflows.values()) {
+				buf.append("\t"+wfr.getName()
+						+" has "+wfr.getActions().size()+" actions and "
+						+wfr.getProcesses().size()+" processes \n");
+			}
+		}
+		buf.append("\n");
+		
+		buf.append("--- Processes ---\n");
+		if((processes==null) || (processes.isEmpty()))
+			buf.append("\tNo Processes\n");
+		else {
+			for(ProcessReader pr : processes) {
+				buf.append("\t prosses belonging to <"+pr.getWorkflow().getName()
+					+"> started at <"+dateFormat.format(pr.getStartTime().getTime())
+					+"> has "+pr.getStatus().size()+" action status\n");
+			}
+		}
+		buf.append("\n\n");
+		
 		return buf.toString();
 	}
 

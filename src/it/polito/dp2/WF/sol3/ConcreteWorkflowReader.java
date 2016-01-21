@@ -16,8 +16,7 @@ import it.polito.dp2.WF.lab3.gen.Action;
 import it.polito.dp2.WF.lab3.gen.Workflow;
 
 /**
- * This is a concrete implementation of the interface WorkflowReader based on the JAX-WS framework.<BR><BR>
- * If you want more detail about the interface look to {@link it.polito.dp2.WF.WorkflowReader}
+ * This is a concrete implementation of the interface {@link WorkflowReader} based on the JAX-WS framework.
  * 
  * @author Luca
  */
@@ -83,15 +82,21 @@ public class ConcreteWorkflowReader implements WorkflowReader, Comparable<Workfl
 	
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("Workflow: "+name+"\n");
+		StringBuffer buf = new StringBuffer("Workflow Name: "+name+"\n");
 		
-		buf.append("Actions:\n");
+		buf.append("\tActions:\n");
 		for(ActionReader ar : actionReaders.values()) {
-			buf.append("\t"+ar.toString()+"\n");
+			buf.append("\t\t"+ar.toString()+"\n");
 		}
-		buf.append("Processes:\n");
-		for(ProcessReader pr : processes) {
-			buf.append("\t"+pr.toString()+"\n");
+		
+		buf.append("\tProcesses:\n");
+		if(processes.isEmpty() == false) {
+			for(ProcessReader pr : processes) {
+				buf.append("\t"+pr.toString()+"\n");
+			}
+		}
+		else {
+			buf.append("\t\t No Processes \n");
 		}
 		
 		return buf.toString();

@@ -6,10 +6,10 @@ import it.polito.dp2.WF.lab3.gen.Action;
 
 /**
  * This is an abstract implementation of the interface ActionReader based on JAX-WS framework.<BR>
- * If you want to use that class you have to instantiate one of the following implementation.<BR>
- * {@link it.polito.dp2.WF.sol3.SimpleActionR}<BR>{@link it.polito.dp2.WF.sol3.ProcessActionR}<BR><BR>
- * If you want more detail about the interface look to {@link it.polito.dp2.WF.ActionReader}
+ * If you want to use that class you have to instantiate one of the following implementation:<BR>
+ * {@link SimpleActionR}, {@link ProcessActionR}.
  * 
+ * @see {@link ActionReader}, {@link SimpleActionR}, {@link ProcessActionR}
  * @author Luca
  */
 public abstract class AbstractActionReader implements ActionReader {
