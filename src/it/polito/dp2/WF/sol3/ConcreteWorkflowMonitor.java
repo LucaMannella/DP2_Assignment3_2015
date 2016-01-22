@@ -93,7 +93,7 @@ public class ConcreteWorkflowMonitor implements WorkflowMonitor, Refreshable {
 	 * with the information currently provided by the service.  
 	 */
 	@Override
-	public void refresh() {		// TODO: test me!
+	public void refresh() {
 		System.out.println("...Starting the update procedure...");
 		try {
 			updateWorkflowMonitor();
