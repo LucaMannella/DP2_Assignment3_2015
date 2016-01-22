@@ -23,7 +23,7 @@ public class ProcessActionR extends AbstractActionReader implements ProcessActio
 	public ProcessActionR(Action action, WorkflowReader workflowReader) {
 		super(action, workflowReader);
 		
-		if(action == null)	return;
+		if(action == null) return;	// safety lock
 		
 		workflowName = action.getWorkflow();
 	}

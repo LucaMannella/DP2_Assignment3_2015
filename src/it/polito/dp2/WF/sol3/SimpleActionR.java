@@ -26,6 +26,8 @@ public class SimpleActionR extends AbstractActionReader implements SimpleActionR
 	public SimpleActionR(Action action, WorkflowReader workflowReader) {
 		super(action, workflowReader);
 		
+		if(action == null) return;	// safety lock
+		
 		nextPossibleActions = new HashMap<String, ActionReader>();
 	}
 
