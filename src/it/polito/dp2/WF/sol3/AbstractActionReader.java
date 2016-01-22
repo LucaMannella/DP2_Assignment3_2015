@@ -22,7 +22,8 @@ public abstract class AbstractActionReader implements ActionReader {
 	public AbstractActionReader(Action action, WorkflowReader workflowReader) {
 		this.parent = workflowReader;
 		
-//TODO	if(action == null) return;
+		if(action == null) return;
+		
 		this.name = action.getName();
 		this.role = action.getRole();
 		this.automInst = action.isAutomaticallyInstantiated();
