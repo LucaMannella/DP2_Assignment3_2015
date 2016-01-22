@@ -30,6 +30,8 @@ public class ConcreteWorkflowReader implements WorkflowReader, Comparable<Workfl
 		this.actionReaders = new HashMap<String, ActionReader>();
 		this.processes = new HashSet<ProcessReader>();		//it must remains empty
 		
+		if(workflow == null) return;	//safety lock
+		
 		this.name = workflow.getName();
 		
 		for( Action action : workflow.getAction() ){
