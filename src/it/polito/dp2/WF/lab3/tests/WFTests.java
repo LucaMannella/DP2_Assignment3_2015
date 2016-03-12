@@ -5,22 +5,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.polito.dp2.WF.*;
+import it.polito.dp2.WF.ActionReader;
+import it.polito.dp2.WF.ProcessReader;
+import it.polito.dp2.WF.WorkflowMonitor;
+import it.polito.dp2.WF.WorkflowMonitorFactory;
+import it.polito.dp2.WF.WorkflowReader;
 import it.polito.dp2.WF.lab3.Refreshable;
 import it.polito.dp2.WF.lab3.client.ToggleWorkflowInfo;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 
 public class WFTests {
@@ -47,6 +49,9 @@ public class WFTests {
     
 	private static WorkflowMonitor referenceWorkflowMonitor;	// reference data generator
 	private static WorkflowMonitor testWorkflowMonitor;			// implementation under test
+	
+	@SuppressWarnings("unused")
+	// I don't know why there is this variable if it is not used
 	private static long testcase;
 	
     @BeforeClass
